@@ -1,7 +1,8 @@
 import React,{Component} from 'react';
 import {reduxForm} from 'redux-form';
-import {Link} from 'react-router';
+
 import {createRole} from '../actions/index';
+import Header from './header';
 
 class RolesNew extends Component{
 	static contextTypes ={
@@ -11,16 +12,16 @@ class RolesNew extends Component{
 	onSubmit(props){
 		this.props.createRole(props) //this returns the promise from action , when successfull navigate
 		.then(()=>{
-			//blog post has been created. Navigate user to index
+			//role has been created. Navigate user to index
 			this.context.router.push('/roles');
 		});
 	}
 	render(){
 		const { fields: {roleName}, handleSubmit} =this.props; //ES6
 		//const title = this.props.title //ES5
-		return(<div className="col-md-12 col-lg-12">
-			<h4>Create a new role<Link className='btn-outline-primary btn-sm pull-right' to='/roles'><span className='glyphicon glyphicon-chevron-left' aria-hidden="true"></span>Back</Link></h4>
-			<hr />
+		return(
+			<div className="col-md-12 col-lg-12">
+			<Header heading='Add new Role' linkTo='/roles' buttonGlyph='glyphicon glyphicon-chevron-left' buttonText='Back'/>
 			<form className="col-md-4" onSubmit={handleSubmit(this.onSubmit.bind(this))}>
 				<div className={`col-md-12 form-group ${roleName.touched && roleName.invalid ? 'has-danger' :'' }`} >
 					<input type='text' className='form-control' placeholder='Role Name'  {...roleName}/>
@@ -29,10 +30,7 @@ class RolesNew extends Component{
 					</div>
 					<br />
 					<button type='submit col-md-2' className='btn-outline-primary btn-sm'>Create</button>
-					
 				</div>
-
-			
 			</form>
 			</div>
 		);

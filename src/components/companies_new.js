@@ -1,7 +1,8 @@
 import React,{Component} from 'react';
 import {reduxForm} from 'redux-form';
-import {Link} from 'react-router';
+
 import {createCompany} from '../actions/index';
+import Header from './header';
 
 class CompaniesNew extends Component{
 	static contextTypes ={
@@ -11,29 +12,25 @@ class CompaniesNew extends Component{
 	onSubmit(props){
 		this.props.createCompany(props) //this returns the promise from action , when successfull navigate
 		.then(()=>{
-			//blog post has been created. Navigate user to index
+			//company has been created. Navigate user to index
 			this.context.router.push('/companies');
 		});
 	}
 	render(){
-		const { fields: {companyName}, handleSubmit} =this.props; //ES6
-		//const title = this.props.title //ES5
-		return(<div className="col-md-12 col-lg-12">
-			<h4>Create a new company<Link className='btn-outline-primary btn-sm pull-right' to='/companies'><span className='glyphicon glyphicon-chevron-left' aria-hidden="true"></span>Back</Link></h4>
-			<hr />
-			<form className="col-md-4" onSubmit={handleSubmit(this.onSubmit.bind(this))}>
-				<div className={`col-md-12 form-group ${companyName.touched && companyName.invalid ? 'has-danger' :'' }`} >
-					<input type='text' className='form-control' placeholder='Company Name'  {...companyName}/>
-					<div className='text-help'>
-						{companyName.touched?companyName.error:''}
+		const { fields: {companyName}, handleSubmit} =this.props;
+		return(
+			<div className="col-md-12 col-lg-12">
+				<Header heading='Add new Company' linkTo='/companies' buttonGlyph='glyphicon glyphicon-chevron-left' buttonText='Back'/>
+				<form className="col-md-4" onSubmit={handleSubmit(this.onSubmit.bind(this))}>
+					<div className={`col-md-12 form-group ${companyName.touched && companyName.invalid ? 'has-danger' :'' }`} >
+						<input type='text' className='form-control' placeholder='Company Name'  {...companyName}/>
+						<div className='text-help'>
+							{companyName.touched?companyName.error:''}
+						</div>
+						<br />
+						<button type='submit col-md-2' className='btn-outline-primary btn-sm'>Create</button>
 					</div>
-					<br />
-					<button type='submit col-md-2' className='btn-outline-primary btn-sm'>Create</button>
-					
-				</div>
-
-			
-			</form>
+				</form>
 			</div>
 		);
 	}

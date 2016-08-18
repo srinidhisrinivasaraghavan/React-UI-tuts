@@ -8,17 +8,19 @@ import RolesNew from './components/roles_new';
 import RolesIndex from './components/roles_index'
 import EntitiesNew from './components/entities_new';
 import EntitiesIndex from './components/entities_index';
-import EntityDetails from './components/entities_details'
+import EntityDetails from './components/entities_details';
+import EntityEdit from './components/entities_edit';
 
 export default(
 <Route path='/' component={App}>
 <IndexRoute component ={Home} /> 	
 <Route path='/companies' component={CompaniesIndex} />
-<Route path='/companiesnew' component={CompaniesNew} />
+<Route path='/companies/new' component={CompaniesNew} />
 <Route path='/roles' component={RolesIndex} />
-<Route path='/rolesnew' component={RolesNew} />
+<Route path='/roles/new' component={RolesNew} />
 <Route path='/entities' component={EntitiesIndex} />
-<Route path='/entitiesnew' component={EntitiesNew} />
+<Route path='/entities/new' component={EntitiesNew} />
 <Route path='/entities/:id' component={EntityDetails} />
+<Route path='/entities/edit/:id' component={EntityEdit} />
 </Route>
 );

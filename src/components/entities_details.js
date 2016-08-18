@@ -1,10 +1,12 @@
 import React ,{Component} from 'react';
 import {connect} from 'react-redux';
-import {fetchEntity,fetchCompanies, fetchRoles,createEntity} from '../actions/index';
-
-import {Link} from 'react-router';
-
 import {reduxForm} from 'redux-form';
+
+import {fetchEntity,fetchCompanies, fetchRoles,createEntity} from '../actions/index';
+import Panel from './steps_panel';
+import TableRow from './table_row_cols';
+import Header from './header';
+import {NOT_SENT,SENT_PENDING,SENT_SIGNED,CREATED,CONTRACT_NOT_EMAILED,CONTRACT_EMAILED,CONTRACT_NOT_SIGNED,CONTRACT_SIGNED} from '../config/constants';
 
 class EntityDetails extends Component{
 	componentWillMount(){
@@ -15,171 +17,90 @@ class EntityDetails extends Component{
 	static contextTypes ={                                 
 		router :React.PropTypes.object //gets this from parent
 	};
-	onSubmit(props){
-		//this.props.EditEntity(props) //this returns the promise from action , when successfull navigate
-		//.then(()=>{
-			//blog post has been created. Navigate user to index
-		//	this.context.router.push('/entities');
-		//});
-	}
-		renderCompanyOptions(){
+	renderCompanyOptions(){
 		if(!this.props.companies){
 			return(<option></option>);
 		}
 		return(this.props.companies.map ((company)=>{
 				return(<option key={company._id} value={company.companyName}>{company.companyName}</option>);
-			}));
+		}));
 	}
-
 	renderRoleOptions(){
 		if(!this.props.roles){
 			return(<option></option>);
 		}
 		return(this.props.roles.map ((role)=>{
 				return(<option key={role._id} value={role.roleName}>{role.roleName}</option>);
-			}));
+		}));
 	}
 	render(){
-		const { fields: {firstName, lastName, address, email, username, companyName, role, skipContract}, handleSubmit} =this.props; //ES6
-		//const title = this.props.title //ES5
+		const { fields: {firstName, lastName, address, email, username, companyName, role, skipContract}, handleSubmit} =this.props; 
 		if(!this.props.entity){
 			return<div>Loading</div>
 		}
 		return(
 			<div className="col-md-12 col-lg-12">
-			<h4>Details Legal Entity<Link className='btn-outline-primary btn-sm pull-right' to='/entities'><span className='glyphicon glyphicon-chevron-left' aria-hidden="true"></span>Back</Link></h4>
-			<hr />
-			<div className="col-md-4">
-			<div className="panel panel-default ">
-      <div className="panel-heading">Step 1</div>
-      <div className="panel-body">
-      		<p>Status</p>
-      		<p>Date</p>
-      		<p>Description</p>
-      		</div>
-      </div>
-    </div>
-    <div className=" col-md-4">
-    <div className="panel panel-default ">
-      <div className="panel-heading">Step 2</div>
-      <div className="panel-body"><p>Status</p>
-      		<p>Date</p>
-      		<p>Description</p></div>
-    </div></div>
-    <div className=" col-md-4">
-    <div className="panel panel-default">
-      <div className="panel-heading">Step 3</div>
-      <div className="panel-body"><p>Status</p>
-      		<p>Date</p>
-      		<p>Description</p></div>
-    </div></div>
-			<div className='col-md-6'>
+			<Header heading='Details Legal Entity' linkTo='/entities' buttonGlyph='glyphicon glyphicon-chevron-left' buttonText='Back'/>
+			<Panel
+				statusTag ='Account ' 
+				status={CREATED}
+				date={this.props.entity.contract.dateCreated} 
+				title="The entity has been created. Email to confirm account and sign contract is not sent" 
+				step='Step1: Account Creation  ' 
+				panelType='panel-success'
+				isDoneGlyph='glyphicon glyphicon-ok'/
+			>
+
+			<Panel 
+				status={`${this.props.entity.contract.status===NOT_SENT ? CONTRACT_NOT_EMAILED: CONTRACT_EMAILED }`}
+				date={this.props.entity.contract.dateSent} 
+				title="Email has been send. Entity has to accept the contract and confirm." 
+				step='Step2: Send Contract  ' 
+				panelType={`${this.props.entity.contract.status==='NOT_SENT' ? 'panel-danger' :'panel-success' }`}
+				isDoneGlyph={`${this.props.entity.contract.status==='NOT_SENT' ? 'glyphicon glyphicon-remove' :'glyphicon glyphicon-ok' }`}/
+			>
+			
+			<Panel 
+				status={`${this.props.entity.contract.status===NOT_SENT ? CONTRACT_NOT_EMAILED  : this.props.entity.contract.status===SENT_PENDING ? CONTRACT_NOT_SIGNED : CONTRACT_SIGNED }`} 
+				date={this.props.entity.contract.dateConfirmed} 
+				title="Entity has signed and confirmed the contract" 
+				step='Step3: Contract Signed   ' 
+				panelType={`${this.props.entity.contract.status==='SENT_SIGNED' ? 'panel-success' :'panel-danger' }`}
+				isDoneGlyph={`${this.props.entity.contract.status==='SENT_SIGNED' ? 'glyphicon glyphicon-ok' :'glyphicon glyphicon-remove' }`}/
+			>
+
+			<div className='col-md-6 col-lg-6 col-sm-12 col-xs-12'>
+				<table className='table table-condensed table-bordered'>
+					<tbody>
+						<TableRow th='First Name:' td={this.props.entity.firstName} />
+						<TableRow th='Last Name:' td={this.props.entity.lastName} />
+						<TableRow th='Address:' td={this.props.entity.address} />
+						<TableRow th='Email:' td={this.props.entity.email} />
+						<TableRow th='UserName:' td={this.props.entity.username} />
+						<TableRow th='Account Activated:' td={this.props.entity.accountActivated? 'Yes' :'No'} />
+					</tbody>
+				</table>
+			</div>
+
+			<div className='col-md-6 col-lg-6 col-sm-12 col-xs-12'>
 			<table className='table table-condensed table-bordered'>
 				<tbody>
-					<tr>
-						<th>Account Activated:</th>
-						<td>{this.props.entity.accountActivated? 'Yes' :'No'}</td>
-					</tr>
-					<tr>
-						<th>Skipped Email Confirmation:</th>
-						<td>{this.props.entity.skipContract ? 'Yes' :'No'}</td>
-					</tr>
-					<tr>
-						<th>Contract Status</th>
-						<td>{this.props.entity.contract.status}</td>
-					</tr>
-					<tr>
-						<th>PDF Version Signed</th>
-						<td>{this.props.entity.contract.pdfVersion}</td>
-					</tr>
+					<TableRow th='Company:' td={this.props.entity.companyName} />
+					<TableRow th='Role:' td={this.props.entity.role} />
+					<TableRow th='Skipped Email Confirmation:' td={this.props.entity.skipContract ? 'Yes' :'No'} />
+					<TableRow th='Contract Status' td={this.props.entity.contract.status} />
+					<TableRow th='PDF Version Signed' td={this.props.entity.contract.pdfVersion} />
 				</tbody>
 			</table>
 			</div>
-			<div className='col-md-12'>
-			<h4>Edit Legal Entity</h4>
-			<hr />
-			<form className="form-horizontal" onSubmit={handleSubmit(this.onSubmit.bind(this))}>
-				<div className={`form-group ${firstName.touched && firstName.invalid ? 'has-danger' :'' }`} >
-					<label className="col-md-2 control-label">First Name:</label>
-					<div className="col-sm-10 col-md-6">
-						<input type='text' className='form-control' placeholder='First Name' value={this.props.entity.firstName}  {...firstName}/>
-					</div>
-					<div className='text-help'>
-						{firstName.touched?firstName.error:''}
-					</div>
-				</div>
-				<div className={`form-group ${lastName.touched && lastName.invalid ? 'has-danger' :'' }`} >
-					<label className="col-md-2 control-label">Last Name:</label>
-					<div className="col-sm-10 col-md-6">
-						<input type='text' className='form-control' placeholder='Last Name' value={this.props.entity.lastName}  {...lastName}/>
-					</div>
-						<div className='text-help'>
-							{lastName.touched?lastName.error:''}
-						</div>
-				</div>
-				<div className={`form-group ${address.touched && address.invalid ? 'has-danger' :'' }`} >
-					<label className="col-md-2 control-label">Address:</label>
-					<div className="col-sm-10 col-md-6">
-					<input type='text' className='form-control' placeholder='Address' value={this.props.entity.address}  {...address}/>
-						</div>
-						<div className='text-help'>
-							{address.touched?address.error:''}
-						</div>
-				</div>
-				<div className={`form-group ${email.touched && email.invalid ? 'has-danger' :'' }`} >
-					<label className="col-md-2 control-label">Email:</label>
-					<div className="col-sm-10 col-md-6">
-					<input type='text' disabled className='form-control' placeholder='Email' value={this.props.entity.email}  {...email}/>
-						</div><div className='text-help'>
-							{email.touched?email.error:''}
-						</div>
-				</div>
-				<div className={`form-group ${username.touched && username.invalid ? 'has-danger' :'' }`} >
-					<label className="col-md-2 control-label">Username:</label>
-					<div className="col-sm-10 col-md-6">
-					<input type='text' className='form-control' placeholder='Username' value={this.props.entity.username}  {...username}/>
-						</div><div className='text-help'>
-							{username.touched?username.error:''}
-						</div>
-				</div>
-				<div className={`form-group ${companyName.touched && companyName.invalid ? 'has-danger' :'' }`} >
-					 <label className="col-md-2 control-label">Company Name:</label>
-					<div className="col-sm-10 col-md-6">
-					 <select className='form-control' {...companyName} value={this.props.entity.companyName}>
-             			<option>Select Company</option>
-              			{this.renderCompanyOptions()}
-            		</select>
-            		</div><div className='text-help'>
-							{companyName.touched?companyName.error:''}
-						</div>
-				</div>
-				<div className={`form-group ${role.touched && role.invalid ? 'has-danger' :'' }`} >
-					 <label className="col-md-2 control-label">Role Name:</label>
-					<div className="col-sm-10 col-md-6">
-					 <select className='form-control' {...role} value={this.props.entity.role}>
-             			<option>Select Role</option>
-              			{this.renderRoleOptions()}
-            		</select>
-            		</div><div className='text-help'>
-							{role.touched?role.error:''}
-					</div>
-					<br />
-					<br />
-					<button type='submit col-md-2' className='btn-outline-primary btn-sm'>Save</button>
-				</div>
-			</form>
-			</div></div>
+			</div>
 
 		);
+	}	
 	}
-	
-	}
-
 function mapStateToProps(state){
 	return {entity:state.entities.entity,companies :state.companies.all, roles:state.roles.all};
 }
-
-
 export default reduxForm({
 	form :'CompaniesNewForm',
 	fields :['firstName', 'lastName', 'address', 'email', 'username', 'companyName', 'role', 'skipContract']

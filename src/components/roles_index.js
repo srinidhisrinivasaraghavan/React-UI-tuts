@@ -2,7 +2,8 @@ import React,{Component} from 'react';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {fetchRoles} from '../actions/index';
-import { Link } from 'react-router';
+import Header from './header';
+import Row from './table_row';
 
 class RolesIndex extends Component{
 	componentWillMount(){
@@ -13,11 +14,7 @@ class RolesIndex extends Component{
 		return(
 			this.props.roles.map ((role)=>{
 				return(
-					<tr key={role._id}>
-						<td>
-							{role.roleName}
-						</td>
-					</tr>
+					<Row key={role._id} value={role.roleName} />
 				);
 			}
 		));
@@ -29,12 +26,7 @@ class RolesIndex extends Component{
 		return (
 			//TODO: Need to display posts
 		<div className="col-md-12 col-lg-12">
-			<h4>Roles
-				<Link to="rolesnew" className="pull-right btn btn-sm btn-outline-primary">
-					Add a role <span className='glyphicon glyphicon-plus-sign' aria-hidden="true"></span>
-				</Link>
-			</h4>
-			<hr />
+			<Header heading='List of Roles' linkTo='roles/new' buttonGlyph='glyphicon glyphicon-plus-sign' buttonText='Add a role'/>
 			<table className ='table table-bordered'>
 				<thead>
 					<tr>

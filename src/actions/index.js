@@ -9,6 +9,7 @@ export const FETCH_ROLES='FETCH_ROLES';
 export const SEND_EMAIL='SEND_EMAIL';
 export const CONTRACT_SIGNED='CONTRACT_SIGNED';
 export const FETCH_ENTITY='FETCH_ENTITY';
+export const EDIT_ENTITY='EDIT_ENTITY';
 
 const ROOT_URL = 'http://localhost:3000';
 
@@ -86,6 +87,14 @@ export function fetchEntity(entityId){
 	const request = axios.get(`${ROOT_URL}/entity/${entityId}`);
 	return{
 		type:FETCH_ENTITY,
+		payload:request
+	}
+}
+
+export function editEntity(props, entityId){
+	const request = axios.patch(`${ROOT_URL}/entity/edit/${props._id}`, props);
+	return{
+		type:EDIT_ENTITY,
 		payload:request
 	}
 }
