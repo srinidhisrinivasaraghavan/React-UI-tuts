@@ -6,13 +6,14 @@ import Header from './header';
 
 class EntitiesNew extends Component{
 	componentWillMount(){
-		this.props.fetchCompanies();
-		this.props.fetchRoles();
+		this.props.fetchCompanies().then(()=>{this.props.fetchRoles();});
+		
 	}
 	static contextTypes ={                                 
 		router :React.PropTypes.object //gets this from parent
 	};
 	onSubmit(props){
+		console.log('...............',props);
 		this.props.createEntity(props) //this returns the promise from action , when successfull navigate
 		.then(()=>{
 			//entity has been created. Navigate user to index
@@ -40,7 +41,6 @@ class EntitiesNew extends Component{
 		return(
 			<div className="col-md-12 col-lg-12">
 				<Header heading='Create a new Legal Entity' linkTo='/entities' buttonGlyph='glyphicon glyphicon-chevron-left' buttonText='Back'/>
-				<hr />
 				<form className="form-horizontal" onSubmit={handleSubmit(this.onSubmit.bind(this))}>
 					<div className={`col-md-12 form-group ${firstName.touched && firstName.invalid ? 'has-danger' :'' }`} >
 						<label className="col-md-2 control-label">First Name:</label>
@@ -155,7 +155,8 @@ function validate(values){
 }
 
 function mapStateToProps(state){
-	return {companies :state.companies.all, roles:state.roles.all};
+	console.log(state);
+	return {companies :state.companies.all, roles:state.roles.allRoles};
 }
 //reduxForm(config,mapStateToProps,mapDispatchToProps)
 //reduxform injects these config on props

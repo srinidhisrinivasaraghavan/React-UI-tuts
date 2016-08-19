@@ -48,15 +48,8 @@ export default class App extends Component {
             </div>
         </div>
     <script src="./js/jquery.js"></script>
-
-
     <script src="./js/bootstrap.min.js"></script>
-
-
-    <script src="./js/toggle.js">
-    
-    </script>
-
+    <script src="./js/toggle.js"></script>
     </div>
     );
   }

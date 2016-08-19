@@ -54,8 +54,6 @@ export function fetchRoles(){
 }
 
  export function createEntity(props){
- 	var URL = window.location.protocol + "//" + window.location.host;
- 	props.url=URL;
  	if(!props.skipContract)
  		props.skipContract=false;
 	const request = axios.post(`${ROOT_URL}/entities`, props);
@@ -66,9 +64,7 @@ export function fetchRoles(){
 }
 
 export function sendEmail(entityId){
-	var url ={};
-    url.URL = window.location.protocol + "//" + window.location.host;
-	const request = axios.patch(`${ROOT_URL}/entity/${entityId}/sendemail`,url);
+	const request = axios.patch(`${ROOT_URL}/entity/${entityId}/sendemail`);
 	return{
 		type:SEND_EMAIL,
 		payload:request
@@ -76,7 +72,7 @@ export function sendEmail(entityId){
 }
 
 export function contractSigned(entityId){
-	const request = axios.get(`${ROOT_URL}/entity/${entityId}/contractsigned`);
+	const request = axios.patch(`${ROOT_URL}/entity/${entityId}/contractsigned`);
 	return{
 		type:CONTRACT_SIGNED,
 		payload:request
@@ -92,7 +88,7 @@ export function fetchEntity(entityId){
 }
 
 export function editEntity(props, entityId){
-	const request = axios.patch(`${ROOT_URL}/entity/edit/${props._id}`, props);
+	const request = axios.put(`${ROOT_URL}/entity/edit/${entityId}`, props);
 	return{
 		type:EDIT_ENTITY,
 		payload:request

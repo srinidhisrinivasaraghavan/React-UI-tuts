@@ -29,10 +29,10 @@ class EntitesIndex extends Component{
 							</Link>
 						</td>
 						<td>
-							{entity.firstName}
+							{entity.contract.firstName}
 						</td>
 						<td>
-							{entity.companyName}
+							{entity.contract.companyName}
 						</td>
 						<td>
 							{entity.role}

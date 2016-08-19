@@ -11,7 +11,12 @@ export default function(state =INITIAL_STATE,action){
        		return { ...state, all: action.payload.data.result };
 		}
 		case FETCH_ENTITY:{
-       		return { ...state, entity: action.payload.data };
+			var entityUI = action.payload.data;
+			entityUI.firstName = action.payload.data.contract.firstName;
+			entityUI.lastName = action.payload.data.contract.lastName;	
+			entityUI.companyName = action.payload.data.contract.companyName;
+			entityUI.email = action.payload.data.contract.email;
+       		return { ...state, entity: entityUI };
 		}
 		default:return state;
 	}

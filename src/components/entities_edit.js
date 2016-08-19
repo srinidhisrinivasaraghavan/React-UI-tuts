@@ -9,15 +9,14 @@ import Header from './header';
 class EntityEdit extends Component{
 	componentWillMount(){
 		this.props.fetchEntity(this.props.params.id);
-		this.props.fetchCompanies();
-		this.props.fetchRoles();
+		this.props.fetchCompanies().then(()=>{this.props.fetchRoles();});
 	}
 	static contextTypes ={                                 
 		router :React.PropTypes.object //gets this from parent
 	};
 	onSubmit(props){
 		console.log(props);
-		this.props.editEntity(props) //this returns the promise from action , when successfull navigate
+		this.props.editEntity(props,this.props.params.id) //this returns the promise from action , when successfull navigate
 		.then(()=>{
 			//entity has been edited. Navigate user to index
 			this.context.router.push('/entities');
@@ -43,7 +42,7 @@ class EntityEdit extends Component{
 		if(!this.props.entity){
 			return<div>Loading</div>
 		}
-        const { fields: {firstName, lastName, address, email, username, companyName, role, skipContract ,_id}, handleSubmit} =this.props; //ES6
+        const { fields: {firstName, lastName, address, email, username, companyName, role}, handleSubmit} =this.props; //ES6
 		return(
                 <div className="col-md-12 col-lg-12">
                 <Header heading='Edit Legal Entity' linkTo='/entities' buttonGlyph='glyphicon glyphicon-chevron-left' buttonText='Back'/>
@@ -82,7 +81,7 @@ class EntityEdit extends Component{
                     <div className={`form-group ${email.touched && email.invalid ? 'has-danger' : '' }`}>
                         <label className="col-md-2 control-label">Email:</label>
                         <div className="col-sm-10 col-md-6">
-                            <input type='text' disabled className='form-control' placeholder='Email' {...email}/>
+                            <input type='text' className='form-control' placeholder='Email' {...email}/>
                         </div>
                         <div className='text-help'>
                             {email.touched?email.error:''}
@@ -166,12 +165,12 @@ function validate(values){
 
 
 function mapStateToProps(state){
-	return {entity:state.entities.entity, companies :state.companies.all, roles:state.roles.all, initialValues: state.entities.entity};
+	return {entity:state.entities.entity, companies :state.companies.all, roles:state.roles.allRoles, initialValues: state.entities.entity};
 }
 
 
 export default reduxForm({
 	form :'CompaniesEditForm',
-	fields :['firstName', 'lastName', 'address', 'email', 'username', 'companyName', 'role', 'skipContract', '_id'],
+	fields :['firstName', 'lastName', 'address', 'email', 'username', 'companyName', 'role'],
     validate
 },mapStateToProps,{editEntity,fetchCompanies, fetchRoles,fetchEntity})(EntityEdit);
