@@ -15,7 +15,6 @@ class EntityEdit extends Component{
 		router :React.PropTypes.object //gets this from parent
 	};
 	onSubmit(props){
-		console.log(props);
 		this.props.editEntity(props,this.props.params.id) //this returns the promise from action , when successfull navigate
 		.then(()=>{
 			//entity has been edited. Navigate user to index

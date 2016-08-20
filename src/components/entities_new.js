@@ -1,10 +1,17 @@
 import React,{Component} from 'react';
 import {reduxForm} from 'redux-form';
+import axios from 'axios';
+const ROOT_URL = 'http://localhost:3000';
 
-import {createEntity, fetchCompanies, fetchRoles} from '../actions/index';
+import {createEntity, fetchCompanies, fetchRoles, emailExists} from '../actions/index';
 import Header from './header';
 
 class EntitiesNew extends Component{
+	 constructor(props){
+        super(props); // prints out whatever is inside props
+        //asyncValidate=asyncValidate.bind(this);
+    }
+
 	componentWillMount(){
 		this.props.fetchCompanies().then(()=>{this.props.fetchRoles();});
 		
@@ -13,12 +20,15 @@ class EntitiesNew extends Component{
 		router :React.PropTypes.object //gets this from parent
 	};
 	onSubmit(props){
-		console.log('...............',props);
-		this.props.createEntity(props) //this returns the promise from action , when successfull navigate
+		this.props.emailExists(props.email).then(()=>{
+			console.log(this.props.Exists.isExist);
+			validate(props,this.props.Exists.isExist);
+		});
+		/*this.props.createEntity(props) //this returns the promise from action , when successfull navigate
 		.then(()=>{
 			//entity has been created. Navigate user to index
 			this.context.router.push('/entities');
-		});
+		});*/
 	}
 	renderCompanyOptions(){
 		if(!this.props.companies){
@@ -37,7 +47,7 @@ class EntitiesNew extends Component{
 		}));
 	}
 	render(){
-		const { fields: {firstName, lastName, address, email, username, companyName, role, skipContract}, handleSubmit} =this.props;
+		const { asyncValidating,fields:   {firstName, lastName, address, email, username, companyName, role, skipContract}, handleSubmit} =this.props;
 		return(
 			<div className="col-md-12 col-lg-12">
 				<Header heading='Create a new Legal Entity' linkTo='/entities' buttonGlyph='glyphicon glyphicon-chevron-left' buttonText='Back'/>
@@ -72,7 +82,8 @@ class EntitiesNew extends Component{
 					<div className={`col-md-12 form-group ${email.touched && email.invalid ? 'has-danger' :'' }`} >
 						<label className="col-md-2 control-label">Email:</label>
                         <div className="col-sm-10 col-md-6">
-							<input type='text' className='form-control' placeholder='Email'  {...email}/>
+							<input type='text' className='form-control' placeholder='Email' {...email}/>
+							{asyncValidating === 'email' && <i /* spinning cog *//>}
 						</div>
 						<div className='text-help'>
 							{email.touched?email.error:''}
@@ -128,7 +139,8 @@ class EntitiesNew extends Component{
 }
 
 //If errors object has a key that matches any input, then that field is invalid, Therefore the form is also invalid
-function validate(values){
+function validate(values,emailExists){
+	//console.log('validate',emailExists);
 	const errors={};
 	if(!values.firstName){
 		errors.firstName="Enter first name";
@@ -154,14 +166,22 @@ function validate(values){
 	return errors;
 }
 
+
+var asyncValidate = function(values/*, dispatch */)  {
+  return emailExists(values.email);
+}
+
 function mapStateToProps(state){
-	console.log(state);
-	return {companies :state.companies.all, roles:state.roles.allRoles};
+	//console.log(state.entities.isExist);
+	return {companies :state.companies.all, roles:state.roles.allRoles , Exists:state.entities.isExist };
 }
 //reduxForm(config,mapStateToProps,mapDispatchToProps)
 //reduxform injects these config on props
 export default reduxForm({
 	form :'CompaniesNewForm',
 	fields :['firstName', 'lastName', 'address', 'email', 'username', 'companyName', 'role', 'skipContract'],
+	asyncValidate,
+  	asyncBlurFields: [ 'email' ],
 	validate
-},mapStateToProps,{createEntity,fetchCompanies, fetchRoles})(EntitiesNew);
+	},
+	mapStateToProps,{createEntity,fetchCompanies, fetchRoles, emailExists})(EntitiesNew);

@@ -1,6 +1,6 @@
-import {FETCH_ENTITIES,CREATE_ENTITY,FETCH_ENTITY} from '../actions/index';
+import {FETCH_ENTITIES,CREATE_ENTITY,FETCH_ENTITY, EMAIL_EXISTS} from '../actions/index';
 
-const INITIAL_STATE={all:[], entity:null};
+const INITIAL_STATE={all:[], entity:null, isExist:{isExist:false}};
 
 export default function(state =INITIAL_STATE,action){
 	switch(action.type){
@@ -18,6 +18,11 @@ export default function(state =INITIAL_STATE,action){
 			entityUI.email = action.payload.data.contract.email;
        		return { ...state, entity: entityUI };
 		}
+		case EMAIL_EXISTS:{
+			var result ={isExist :action.payload.data }
+			return {...state ,isExist :result};
+		}
+		console.log('default');
 		default:return state;
 	}
 }

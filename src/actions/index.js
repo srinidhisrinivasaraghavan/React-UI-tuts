@@ -10,6 +10,7 @@ export const SEND_EMAIL='SEND_EMAIL';
 export const CONTRACT_SIGNED='CONTRACT_SIGNED';
 export const FETCH_ENTITY='FETCH_ENTITY';
 export const EDIT_ENTITY='EDIT_ENTITY';
+export const EMAIL_EXISTS='EMAIL_EXISTS';
 
 const ROOT_URL = 'http://localhost:3000';
 
@@ -94,4 +95,24 @@ export function editEntity(props, entityId){
 		payload:request
 	}
 }
+
+export function emailExists(email){
+	var res;
+	axios.get(`${ROOT_URL}/entity/${email}/exists`).then((result)=>{
+		console.log(result);
+		res=result.data;
+
+	return new Promise((resolve, reject) => {
+    setTimeout(() => {
+  	console.log(res);
+      if ([ 'john', 'paul', 'george', 'ringo' ].includes(email)) {
+        reject({ email: 'That email is taken' })
+      } else {
+        resolve()
+      }
+    }, 1) // simulate server latency
+  });
+});	
+}
+
 

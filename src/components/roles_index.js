@@ -44,8 +44,8 @@ class RolesIndex extends Component{
 
 //state from reducer
 function mapStateToProps(state){
-	console.log("state",state.roles.all);
-	return {roles :state.roles.all};
+	console.log("state",state.roles.allRoles);
+	return {roles :state.roles.allRoles};
 }
 
 //dispatch from action creater
