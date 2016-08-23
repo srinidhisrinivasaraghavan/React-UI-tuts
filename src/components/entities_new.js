@@ -1,15 +1,15 @@
 import React,{Component} from 'react';
 import {reduxForm} from 'redux-form';
 import axios from 'axios';
-const ROOT_URL = 'http://localhost:3000';
+import validator from 'validator';
+import { Link } from 'react-router';
 
-import {createEntity, fetchCompanies, fetchRoles, emailExists} from '../actions/index';
+import {createEntity, fetchCompanies, fetchRoles,emailExists} from '../actions/index';
 import Header from './header';
 
 class EntitiesNew extends Component{
 	 constructor(props){
         super(props); // prints out whatever is inside props
-        //asyncValidate=asyncValidate.bind(this);
     }
 
 	componentWillMount(){
@@ -20,15 +20,11 @@ class EntitiesNew extends Component{
 		router :React.PropTypes.object //gets this from parent
 	};
 	onSubmit(props){
-		this.props.emailExists(props.email).then(()=>{
-			console.log(this.props.Exists.isExist);
-			validate(props,this.props.Exists.isExist);
-		});
-		/*this.props.createEntity(props) //this returns the promise from action , when successfull navigate
+		this.props.createEntity(props) //this returns the promise from action , when successfull navigate
 		.then(()=>{
 			//entity has been created. Navigate user to index
 			this.context.router.push('/entities');
-		});*/
+		});
 	}
 	renderCompanyOptions(){
 		if(!this.props.companies){
@@ -47,7 +43,7 @@ class EntitiesNew extends Component{
 		}));
 	}
 	render(){
-		const { asyncValidating,fields:   {firstName, lastName, address, email, username, companyName, role, skipContract}, handleSubmit} =this.props;
+		const { asyncValidating, fields:   {firstName, lastName, address, email, username, companyName, role, skipContract}, handleSubmit} =this.props;
 		return(
 			<div className="col-md-12 col-lg-12">
 				<Header heading='Create a new Legal Entity' linkTo='/entities' buttonGlyph='glyphicon glyphicon-chevron-left' buttonText='Back'/>
@@ -86,7 +82,14 @@ class EntitiesNew extends Component{
 							{asyncValidating === 'email' && <i /* spinning cog *//>}
 						</div>
 						<div className='text-help'>
-							{email.touched?email.error:''}
+						{console.log(email.error)}
+							{email.touched ? email.error === 'Enter email' ? email.error : email.error === undefined ? '' : <Link to={"entities/" + entity.error} className='btn-outline-primary btn-sm'>
+								View Entity
+							</Link> : ''}
+
+							{email.error === 'That email is taken' ? <Link to={"entities/"} className='btn-outline-primary btn-sm'>
+								View Entity
+							</Link> : ''}
 						</div>
 					</div>
 					<div className={`col-md-12 form-group ${username.touched && username.invalid ? 'has-danger' :'' }`} >
@@ -128,7 +131,7 @@ class EntitiesNew extends Component{
 						</div>
 						<br />
 						<br />
-						<div className='col-md-offset-2'>
+						<div className='col-md-offset-2 col-md-1'>
 							<button type='submit' className='btn-outline-primary btn-sm'>Create</button>
 						</div>
 					</div>
@@ -139,8 +142,7 @@ class EntitiesNew extends Component{
 }
 
 //If errors object has a key that matches any input, then that field is invalid, Therefore the form is also invalid
-function validate(values,emailExists){
-	//console.log('validate',emailExists);
+function validate(values){
 	const errors={};
 	if(!values.firstName){
 		errors.firstName="Enter first name";
@@ -153,6 +155,10 @@ function validate(values,emailExists){
 	}
 	if(!values.email){
 		errors.email="Enter email";
+	}
+	else if(!(validator.isEmail(values.email)))
+	{
+		errors.email="Enter a valid email";
 	}
 	if(!values.username){
 		errors.username="Enter username";
@@ -167,8 +173,18 @@ function validate(values,emailExists){
 }
 
 
-var asyncValidate = function(values/*, dispatch */)  {
-  return emailExists(values.email);
+var asyncValidate = function(values /*, dispatch */)  {
+	return new Promise((resolve, reject) => {
+		var  response= emailExists(values.email);
+		response.payload.then((res)=>{
+      		if (res.data.result==true) {
+        		reject({ email:  ''+res.data.result })
+     		}
+     		else {
+        		resolve();
+      		}
+  		});
+	});
 }
 
 function mapStateToProps(state){

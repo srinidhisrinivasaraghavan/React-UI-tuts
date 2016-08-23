@@ -23,10 +23,20 @@ export function fetchCompanies(){
 }
 
  export function createCompany(props){
+ 	console.log(props);
 	const request = axios.post(`${ROOT_URL}/company`, props);
 	return{
 		type:CREATE_COMPANY,
 		payload:axios.get(`${ROOT_URL}/companies`)
+	}
+}
+
+export function companyNameExists(companyName){
+	var res;
+    var request=axios.get(`${ROOT_URL}/company/${companyName}/exists`);
+	return{
+		type:'COMPANY_EXISTS',
+		payload:request
 	}
 }
 
@@ -38,18 +48,27 @@ export function fetchCompanies(){
 	}
 }
 
-export function fetchEntites(){
-	const request = axios.get(`${ROOT_URL}/entities`);
-	return{
-		type:FETCH_ENTITIES,
-		payload:request
-	}
-}
-
 export function fetchRoles(){
 	const request = axios.get(`${ROOT_URL}/roles`);
 	return{
 		type:FETCH_ROLES,
+		payload:request
+	}
+}
+
+export function roleNameExists(roleName){
+	var res;
+    var request=axios.get(`${ROOT_URL}/role/${roleName}/exists`);
+	return{
+		type:'ROLE_EXISTS',
+		payload:request
+	}
+}
+
+export function fetchEntites(){
+	const request = axios.get(`${ROOT_URL}/entities`);
+	return{
+		type:FETCH_ENTITIES,
 		payload:request
 	}
 }
@@ -98,21 +117,11 @@ export function editEntity(props, entityId){
 
 export function emailExists(email){
 	var res;
-	axios.get(`${ROOT_URL}/entity/${email}/exists`).then((result)=>{
-		console.log(result);
-		res=result.data;
-
-	return new Promise((resolve, reject) => {
-    setTimeout(() => {
-  	console.log(res);
-      if ([ 'john', 'paul', 'george', 'ringo' ].includes(email)) {
-        reject({ email: 'That email is taken' })
-      } else {
-        resolve()
-      }
-    }, 1) // simulate server latency
-  });
-});	
+    var request=axios.get(`${ROOT_URL}/entity/${email}/exists`);
+	return{
+		type:EMAIL_EXISTS,
+		payload:request
+	}
 }
 
 

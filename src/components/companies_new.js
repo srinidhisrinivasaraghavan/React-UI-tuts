@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 import {reduxForm} from 'redux-form';
 
-import {createCompany} from '../actions/index';
+import {createCompany,companyNameExists} from '../actions/index';
 import Header from './header';
 
 class CompaniesNew extends Component{
@@ -10,6 +10,7 @@ class CompaniesNew extends Component{
 	};
 
 	onSubmit(props){
+		console.log('submit');
 		this.props.createCompany(props) //this returns the promise from action , when successfull navigate
 		.then(()=>{
 			//company has been created. Navigate user to index
@@ -17,18 +18,24 @@ class CompaniesNew extends Component{
 		});
 	}
 	render(){
-		const { fields: {companyName}, handleSubmit} =this.props;
+		const { asyncValidating, fields: {companyName}, handleSubmit} =this.props;
 		return(
 			<div className="col-md-12 col-lg-12">
 				<Header heading='Add new Company' linkTo='/companies' buttonGlyph='glyphicon glyphicon-chevron-left' buttonText='Back'/>
-				<form className="col-md-4" onSubmit={handleSubmit(this.onSubmit.bind(this))}>
+				<form className="form-horizontal" onSubmit={handleSubmit(this.onSubmit.bind(this))}>
 					<div className={`col-md-12 form-group ${companyName.touched && companyName.invalid ? 'has-danger' :'' }`} >
-						<input type='text' className='form-control' placeholder='Company Name'  {...companyName}/>
-						<div className='text-help'>
+                        <div className="col-sm-10 col-md-6">
+							<input type='text' className='form-control' placeholder='Company Name'  {...companyName}/>
+							{asyncValidating === 'companyName' && <i /* spinning cog *//>}
+						</div>
+						<div className='text-help col-md-6'>
 							{companyName.touched?companyName.error:''}
 						</div>
 						<br />
-						<button type='submit col-md-2' className='btn-outline-primary btn-sm'>Create</button>
+						<br />
+						<div className='col-md-1'> 
+							<button type='submit' className='btn-outline-primary btn-sm'>Create</button>
+						</div>
 					</div>
 				</form>
 			</div>
@@ -44,11 +51,27 @@ function validate(values){
 	}
 	return errors;
 }
+var asyncValidate = function(values /*, dispatch*/ )  {
+	return new Promise((resolve, reject) => {
+		var  response= companyNameExists(values.companyName);
+		response.payload.then((res)=>{
+			console.log(res.data);
+      		if (res.data.result==true) {
+        		reject({ companyName: 'Company name exists!' })
+     		}
+     		else {
+        		resolve();
+      		}
+  		});
+	});
+}
 
 //reduxForm(config,mapStateToProps,mapDispatchToProps)
 //reduxform injects these config on props
 export default reduxForm({
 	form :'CompaniesNewForm',
 	fields :['companyName'],
+	asyncValidate,
+  	asyncBlurFields: [ 'companyName' ],
 	validate
-},null,{createCompany})(CompaniesNew);
+},null,{createCompany,companyNameExists})(CompaniesNew);

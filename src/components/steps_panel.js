@@ -19,7 +19,7 @@ export default(props)=>{
       				<p>{`${props.step===STEP1 ? 'Account' :'' }`}  Status : {props.status}    </p> 
       				<p>Date: {props.date}</p>
                               <button className={props.buttonClass} onClick={props.onClickHandler}>
-                                    {`${props.step===STEP1 ? 'Send Email' :props.step===STEP2 ? 'Resend Email' :'Contract Signed' }`} 
+                                    {`${props.step===STEP1 ? 'Send Email' :props.step===STEP2 ? 'Resend Email' :'Contract Signed Manually' }`} 
                               </button>
       			</div>
       		</div>

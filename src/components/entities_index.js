@@ -65,7 +65,7 @@ class EntitesIndex extends Component{
 												 }}
 										}
 								>
-								Contract Signed
+								Contract Signed Manually
 							</button>
 						</td>
 					</tr>
@@ -90,7 +90,7 @@ class EntitesIndex extends Component{
 								<th>Role</th>
 								<th>Contract Status</th>
 								<th>Send Email </th>
-								<th>Contract Signed</th>
+								<th>Contract Signed Manually</th>
 							</tr>
 						</thead>
 						<tbody>

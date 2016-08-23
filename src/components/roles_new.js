@@ -1,7 +1,7 @@
 import React,{Component} from 'react';
 import {reduxForm} from 'redux-form';
 
-import {createRole} from '../actions/index';
+import {createRole,roleNameExists} from '../actions/index';
 import Header from './header';
 
 class RolesNew extends Component{
@@ -17,19 +17,25 @@ class RolesNew extends Component{
 		});
 	}
 	render(){
-		const { fields: {roleName}, handleSubmit} =this.props; //ES6
+		const {asyncValidating, fields: {roleName}, handleSubmit} =this.props; //ES6
 		//const title = this.props.title //ES5
 		return(
 			<div className="col-md-12 col-lg-12">
 			<Header heading='Add new Role' linkTo='/roles' buttonGlyph='glyphicon glyphicon-chevron-left' buttonText='Back'/>
-			<form className="col-md-4" onSubmit={handleSubmit(this.onSubmit.bind(this))}>
+			<form className="form-horizontal" onSubmit={handleSubmit(this.onSubmit.bind(this))}>
 				<div className={`col-md-12 form-group ${roleName.touched && roleName.invalid ? 'has-danger' :'' }`} >
-					<input type='text' className='form-control' placeholder='Role Name'  {...roleName}/>
-					<div className='text-help'>
+					<div className="col-sm-10 col-md-6">
+						<input type='text' className='form-control' placeholder='Role Name'  {...roleName}/>
+						{asyncValidating === 'roleName' && <i /* spinning cog *//>}
+					</div>
+					<div className='text-help col-md-6'>
 						{roleName.touched?roleName.error:''}
 					</div>
 					<br />
-					<button type='submit col-md-2' className='btn-outline-primary btn-sm'>Create</button>
+					<br />
+					<div className='col-md-1'> 
+						<button type='submit col-md-2' className='btn-outline-primary btn-sm'>Create</button>
+					</div>
 				</div>
 			</form>
 			</div>
@@ -46,10 +52,27 @@ function validate(values){
 	return errors;
 }
 
+var asyncValidate = function(values /*, dispatch*/ )  {
+	return new Promise((resolve, reject) => {
+		var  response= roleNameExists(values.roleName);
+		response.payload.then((res)=>{
+			console.log(response.payload);
+      		if (res.data.result==true) {
+        		reject({ roleName: 'Role name exists!' })
+     		}
+     		else {
+        		resolve();
+      		}
+  		});
+	});
+}
+
 //reduxForm(config,mapStateToProps,mapDispatchToProps)
 //reduxform injects these config on props
 export default reduxForm({
 	form :'RolesNewForm',
 	fields :['roleName'],
+	asyncValidate,
+  	asyncBlurFields: [ 'roleName' ],
 	validate
-},null,{createRole})(RolesNew);
+},null,{createRole,roleNameExists})(RolesNew);

@@ -11,11 +11,12 @@ export default function(state =INITIAL_STATE,action){
        		return { ...state, all: action.payload.data.result };
 		}
 		case FETCH_ENTITY:{
-			var entityUI = action.payload.data;
-			entityUI.firstName = action.payload.data.contract.firstName;
-			entityUI.lastName = action.payload.data.contract.lastName;	
-			entityUI.companyName = action.payload.data.contract.companyName;
-			entityUI.email = action.payload.data.contract.email;
+			var result = action.payload.data.result;
+			var entityUI = action.payload.data.result;
+			entityUI.firstName = result.contract.firstName;
+			entityUI.lastName = result.contract.lastName;	
+			entityUI.companyName = result.contract.companyName;
+			entityUI.email = result.contract.email;
        		return { ...state, entity: entityUI };
 		}
 		case EMAIL_EXISTS:{
