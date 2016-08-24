@@ -1,5 +1,6 @@
 import React,{Component} from 'react';
 import {reduxForm} from 'redux-form';
+import omit from 'lodash/omit';
 
 import {createCompany,companyNameExists} from '../actions/index';
 import Header from './header';
@@ -55,7 +56,6 @@ var asyncValidate = function(values /*, dispatch*/ )  {
 	return new Promise((resolve, reject) => {
 		var  response= companyNameExists(values.companyName);
 		response.payload.then((res)=>{
-			console.log(res.data);
       		if (res.data.result==true) {
         		reject({ companyName: 'Company name exists!' })
      		}

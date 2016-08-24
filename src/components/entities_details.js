@@ -44,7 +44,7 @@ class EntityDetails extends Component{
 		}
 		return(
 			<div className="col-md-12 col-lg-12">
-			<Header heading='Details Legal Entity' linkTo='/entities' buttonGlyph='glyphicon glyphicon-chevron-left' buttonText='Back'/>
+			<Header heading='Details Legal Entity' linkTo='/entities' buttonGlyph='glyphicon glyphicon-chevron-left' buttonText='Back to Entities'/>
 			<Panel
 				status={CREATED}
 				date={this.props.entity.dateCreated} 

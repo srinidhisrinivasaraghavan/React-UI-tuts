@@ -1,8 +1,9 @@
 import React ,{Component} from 'react';
 import {connect} from 'react-redux';
 import {reduxForm} from 'redux-form';
+import { Link } from 'react-router';
 
-import {fetchEntity,fetchCompanies, fetchRoles,editEntity} from '../actions/index';
+import {fetchEntity,fetchCompanies, fetchRoles,editEntity,emailExists} from '../actions/index';
 import Panel from './steps_panel';
 import Header from './header';
 
@@ -41,7 +42,7 @@ class EntityEdit extends Component{
 		if(!this.props.entity){
 			return<div>Loading</div>
 		}
-        const { fields: {firstName, lastName, address, email, username, companyName, role}, handleSubmit} =this.props; //ES6
+        const { asyncValidating, fields: {firstName, lastName, address, email, username, companyName, role}, handleSubmit} =this.props; //ES6
 		return(
                 <div className="col-md-12 col-lg-12">
                 <Header heading='Edit Legal Entity' linkTo='/entities' buttonGlyph='glyphicon glyphicon-chevron-left' buttonText='Back'/>
@@ -81,9 +82,12 @@ class EntityEdit extends Component{
                         <label className="col-md-2 control-label">Email:</label>
                         <div className="col-sm-10 col-md-6">
                             <input type='text' className='form-control' placeholder='Email' {...email}/>
+                            {asyncValidating === 'email' && <i /* spinning cog *//>}
                         </div>
                         <div className='text-help'>
-                            {email.touched?email.error:''}
+                            {email.touched ? email.error === 'Enter email' ? email.error : email.error === undefined ? '' :  <Link to={"entities/" + email.error} className='btn-outline-primary btn-sm'>
+                                This Email Id is taken. View Entity
+                            </Link> : ''}
                         </div>
                     </div>
             
@@ -162,6 +166,20 @@ function validate(values){
     return errors;
 }
 
+var asyncValidate = function(values,dispatch,props)  {
+    return new Promise((resolve, reject) => {
+        var  response= emailExists(values.email);
+        response.payload.then((res)=>{
+            if (res.data.result.isExist==true && values.email != props.initialValues.email) {
+                reject({ email:  ''+res.data.result.docId })
+            }
+            else {
+                resolve();
+            }
+        });
+    });
+}
+
 
 function mapStateToProps(state){
 	return {entity:state.entities.entity, companies :state.companies.all, roles:state.roles.allRoles, initialValues: state.entities.entity};
@@ -171,5 +189,7 @@ function mapStateToProps(state){
 export default reduxForm({
 	form :'CompaniesEditForm',
 	fields :['firstName', 'lastName', 'address', 'email', 'username', 'companyName', 'role'],
+    asyncValidate,
+    asyncBlurFields: [ 'email' ],
     validate
-},mapStateToProps,{editEntity,fetchCompanies, fetchRoles,fetchEntity})(EntityEdit);
+},mapStateToProps,{editEntity,fetchCompanies, fetchRoles,fetchEntity,emailExists})(EntityEdit);

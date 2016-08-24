@@ -82,13 +82,8 @@ class EntitiesNew extends Component{
 							{asyncValidating === 'email' && <i /* spinning cog *//>}
 						</div>
 						<div className='text-help'>
-						{console.log(email.error)}
-							{email.touched ? email.error === 'Enter email' ? email.error : email.error === undefined ? '' : <Link to={"entities/" + entity.error} className='btn-outline-primary btn-sm'>
-								View Entity
-							</Link> : ''}
-
-							{email.error === 'That email is taken' ? <Link to={"entities/"} className='btn-outline-primary btn-sm'>
-								View Entity
+							{email.touched ? email.error === 'Enter email' ? email.error : email.error === undefined ? '' :  <Link to={"entities/" + email.error} className='btn-outline-primary btn-sm'>
+								This Email Id is taken. View Entity
 							</Link> : ''}
 						</div>
 					</div>
@@ -177,8 +172,9 @@ var asyncValidate = function(values /*, dispatch */)  {
 	return new Promise((resolve, reject) => {
 		var  response= emailExists(values.email);
 		response.payload.then((res)=>{
-      		if (res.data.result==true) {
-        		reject({ email:  ''+res.data.result })
+			console.log(res);
+      		if (res.data.result.isExist==true) {
+        		reject({ email:  ''+res.data.result.docId })
      		}
      		else {
         		resolve();
