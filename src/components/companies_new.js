@@ -19,22 +19,32 @@ class CompaniesNew extends Component{
 		});
 	}
 	render(){
-		const { asyncValidating, fields: {companyName}, handleSubmit} =this.props;
+		const { asyncValidating, fields: {companyName, address}, handleSubmit} =this.props;
 		return(
 			<div className="col-md-12 col-lg-12">
 				<Header heading='Add new Company' linkTo='/companies' buttonGlyph='glyphicon glyphicon-chevron-left' buttonText='Back'/>
 				<form className="form-horizontal" onSubmit={handleSubmit(this.onSubmit.bind(this))}>
 					<div className={`col-md-12 form-group ${companyName.touched && companyName.invalid ? 'has-danger' :'' }`} >
+                        <label className="col-md-2 control-label">Company Name*</label>
                         <div className="col-sm-10 col-md-6">
 							<input type='text' className='form-control' placeholder='Company Name'  {...companyName}/>
 							{asyncValidating === 'companyName' && <i /* spinning cog *//>}
 						</div>
-						<div className='text-help col-md-6'>
+						<div className='text-help col-md-4'>
 							{companyName.touched?companyName.error:''}
+						</div>
+					</div>
+					<div className={`col-md-12 form-group ${address.touched && address.invalid ? 'has-danger' :'' }`} >
+                        <label className="col-md-2 control-label">Address*</label>
+                        <div className="col-sm-10 col-md-6">
+							<input type='text' className='form-control' placeholder='Address'  {...address}/>
+						</div>
+						<div className='text-help col-md-4'>
+							{address.touched?address.error:''}
 						</div>
 						<br />
 						<br />
-						<div className='col-md-1'> 
+						<div className='col-md-offset-2 col-md-1'> 
 							<button type='submit' className='btn-outline-primary btn-sm'>Create</button>
 						</div>
 					</div>
@@ -49,6 +59,9 @@ function validate(values){
 	const errors={};
 	if(!values.companyName){
 		errors.companyName="Enter a name";
+	}
+	if(!values.address){
+		errors.address="Enter address";
 	}
 	return errors;
 }
@@ -70,7 +83,7 @@ var asyncValidate = function(values /*, dispatch*/ )  {
 //reduxform injects these config on props
 export default reduxForm({
 	form :'CompaniesNewForm',
-	fields :['companyName'],
+	fields :['companyName', 'address'],
 	asyncValidate,
   	asyncBlurFields: [ 'companyName' ],
 	validate

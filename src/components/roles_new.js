@@ -24,16 +24,17 @@ class RolesNew extends Component{
 			<Header heading='Add new Role' linkTo='/roles' buttonGlyph='glyphicon glyphicon-chevron-left' buttonText='Back'/>
 			<form className="form-horizontal" onSubmit={handleSubmit(this.onSubmit.bind(this))}>
 				<div className={`col-md-12 form-group ${roleName.touched && roleName.invalid ? 'has-danger' :'' }`} >
+					<label className="col-md-2 control-label">Role Name*</label>
 					<div className="col-sm-10 col-md-6">
 						<input type='text' className='form-control' placeholder='Role Name'  {...roleName}/>
 						{asyncValidating === 'roleName' && <i /* spinning cog *//>}
 					</div>
-					<div className='text-help col-md-6'>
+					<div className='text-help col-md-4'>
 						{roleName.touched?roleName.error:''}
 					</div>
 					<br />
 					<br />
-					<div className='col-md-1'> 
+					<div className='col-md-1 col-md-offset-2'> 
 						<button type='submit col-md-2' className='btn-outline-primary btn-sm'>Create</button>
 					</div>
 				</div>

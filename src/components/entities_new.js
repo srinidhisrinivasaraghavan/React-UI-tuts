@@ -49,7 +49,7 @@ class EntitiesNew extends Component{
 				<Header heading='Create a new Legal Entity' linkTo='/entities' buttonGlyph='glyphicon glyphicon-chevron-left' buttonText='Back'/>
 				<form className="form-horizontal" onSubmit={handleSubmit(this.onSubmit.bind(this))}>
 					<div className={`col-md-12 form-group ${firstName.touched && firstName.invalid ? 'has-danger' :'' }`} >
-						<label className="col-md-2 control-label">First Name:</label>
+						<label className="col-md-2 control-label">First Name*</label>
                         <div className="col-sm-10 col-md-6">
 							<input type='text' className='form-control' placeholder='First Name'  {...firstName}/>
 						</div>
@@ -58,7 +58,7 @@ class EntitiesNew extends Component{
 						</div>
 					</div>
 					<div className={`col-md-12 form-group ${lastName.touched && lastName.invalid ? 'has-danger' :'' }`} >
-						<label className="col-md-2 control-label">Last Name:</label>
+						<label className="col-md-2 control-label">Last Name*</label>
                         <div className="col-sm-10 col-md-6">
 							<input type='text' className='form-control' placeholder='Last Name'  {...lastName}/>
 						</div>
@@ -67,7 +67,7 @@ class EntitiesNew extends Component{
 						</div>
 					</div>
 					<div className={`col-md-12 form-group ${address.touched && address.invalid ? 'has-danger' :'' }`} >
-						<label className="col-md-2 control-label">Address:</label>
+						<label className="col-md-2 control-label">Address</label>
                         <div className="col-sm-10 col-md-6">
 							<input type='text' className='form-control' placeholder='Address'  {...address}/>
 						</div>
@@ -76,19 +76,19 @@ class EntitiesNew extends Component{
 						</div>
 					</div>
 					<div className={`col-md-12 form-group ${email.touched && email.invalid ? 'has-danger' :'' }`} >
-						<label className="col-md-2 control-label">Email:</label>
+						<label className="col-md-2 control-label">Email*</label>
                         <div className="col-sm-10 col-md-6">
 							<input type='text' className='form-control' placeholder='Email' {...email}/>
 							{asyncValidating === 'email' && <i /* spinning cog *//>}
 						</div>
 						<div className='text-help'>
-							{email.touched ? email.error === 'Enter email' ? email.error : email.error === undefined ? '' :  <Link to={"entities/" + email.error} className='btn-outline-primary btn-sm'>
+							{email.touched ? email.error === 'Enter email' ? email.error : email.error === undefined ? '' :  <Link to={"/entities/" + email.error} className='btn-outline-primary btn-sm'>
 								This Email Id is taken. View Entity
 							</Link> : ''}
 						</div>
 					</div>
 					<div className={`col-md-12 form-group ${username.touched && username.invalid ? 'has-danger' :'' }`} >
-						<label className="col-md-2 control-label">Username:</label>
+						<label className="col-md-2 control-label">Username*</label>
                         <div className="col-sm-10 col-md-6">
 							<input type='text' className='form-control' placeholder='Username'  {...username}/>
 						</div>
@@ -97,7 +97,7 @@ class EntitiesNew extends Component{
 						</div>
 					</div>
 					<div className={`col-md-12 form-group ${companyName.touched && companyName.invalid ? 'has-danger' :'' }`} >
-						<label className="col-md-2 control-label">Company Name:</label>
+						<label className="col-md-2 control-label">Company Name*</label>
                         <div className="col-sm-10 col-md-6">
 					 		<select className='form-control' {...companyName}>
              					<option>Select Company</option>
@@ -109,7 +109,7 @@ class EntitiesNew extends Component{
 						</div>
 					</div>
 					<div className={`col-md-12 form-group ${role.touched && role.invalid ? 'has-danger' :'' }`} >
-						<label className="col-md-2 control-label">Role:</label>
+						<label className="col-md-2 control-label">Role*</label>
                         <div className="col-sm-10 col-md-6">
 						 	<select className='form-control' {...role}>
              					<option>Select Role</option>
@@ -144,9 +144,6 @@ function validate(values){
 	}
 	if(!values.lastName){
 		errors.lastName="Enter second name";
-	}
-	if(!values.address){
-		errors.address="Enter address";
 	}
 	if(!values.email){
 		errors.email="Enter email";

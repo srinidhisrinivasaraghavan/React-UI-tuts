@@ -5,6 +5,7 @@ import {bindActionCreators} from 'redux';
 import {fetchCompanies} from '../actions/index';
 import Header from './header';
 import Row from './table_row';
+import TableRow from './table_row_cols';
 
 class CompaniesIndex extends Component{
 	componentWillMount(){
@@ -14,7 +15,7 @@ class CompaniesIndex extends Component{
 		return(
 			this.props.companies.map ((company)=>{
 				return(
-					<Row key={company._id} value={company.companyName} />
+					<TableRow key={company._id} th={company.companyName} td={company.address} />
 				);
 			}
 		));
@@ -30,6 +31,7 @@ class CompaniesIndex extends Component{
 						<thead>
 							<tr>
 								<th>Company Name</th>
+								<th>Address</th>
 							</tr>
 						</thead>
 						<tbody>

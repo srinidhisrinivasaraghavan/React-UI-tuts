@@ -23,7 +23,6 @@ export function fetchCompanies(){
 }
 
  export function createCompany(props){
- 	console.log(props);
 	const request = axios.post(`${ROOT_URL}/company`, props);
 	return{
 		type:CREATE_COMPANY,
@@ -74,6 +73,7 @@ export function fetchEntites(){
 }
 
  export function createEntity(props){
+ 	console.log(props);
  	if(!props.skipContract)
  		props.skipContract=false;
 	const request = axios.post(`${ROOT_URL}/entities`, props);
